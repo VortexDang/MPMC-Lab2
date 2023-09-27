@@ -185,6 +185,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  //turn off all pin
+  HAL_GPIO_TogglePin ( LED_RED_GPIO_Port , LED_RED_Pin ) ;
+  HAL_GPIO_TogglePin ( DOT_GPIO_Port, DOT_Pin);
+  HAL_GPIO_TogglePin ( EN0_GPIO_Port , EN0_Pin ) ;
+  HAL_GPIO_TogglePin ( EN1_GPIO_Port , EN1_Pin ) ;
+  HAL_GPIO_TogglePin ( EN2_GPIO_Port , EN2_Pin ) ;
+  HAL_GPIO_TogglePin ( EN3_GPIO_Port , EN3_Pin ) ;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -288,17 +295,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, EN0_Pin|EN1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, DOT_Pin|LED_RED_Pin|EN0_Pin|EN1_Pin
+                          |EN2_Pin|EN3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, SEG0_Pin|SEG1_Pin|SEG2_Pin|SEG3_Pin
                           |SEG4_Pin|SEG5_Pin|SEG6_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : LED_RED_Pin EN0_Pin EN1_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin|EN0_Pin|EN1_Pin;
+  /*Configure GPIO pins : DOT_Pin LED_RED_Pin EN0_Pin EN1_Pin
+                           EN2_Pin EN3_Pin */
+  GPIO_InitStruct.Pin = DOT_Pin|LED_RED_Pin|EN0_Pin|EN1_Pin
+                          |EN2_Pin|EN3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -316,27 +323,46 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int counter = 50;
+int counter1 = 50; ///for 7seg
+int counter2 = 100; ///for led
 int currentsegment=0;
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ){
-	counter --;
-	if( counter <= 0) {
-		counter=50;
-		HAL_GPIO_TogglePin ( LED_RED_GPIO_Port , LED_RED_Pin ) ;
-		switch(currentsegment){
-			case 0:
-				HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
-				HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
-				display7SEG(1);
-				currentsegment=1;
-				break;
-			case 1:
-				HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
-				HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
-				display7SEG(2);
-				currentsegment=0;
-				break;
+	counter1 --;
+	if( counter1 <= 0) {
+		counter1=50;
+		switch(currentsegment){ //change state when half a sec passed
+						case 0: //3 off 0 on
+							HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+							HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
+							display7SEG(1);
+							currentsegment=1;
+							break;
+						case 1: //0 off 1 on
+							HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+							HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+							display7SEG(2);
+							currentsegment=2;
+							break;
+						case 2://1 off 2 on
+							HAL_GPIO_WritePin(EN0_GPIO_Port, EN1_Pin, SET);
+							HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, RESET);
+							display7SEG(3);
+							currentsegment=3;
+							break;
+						case 3://2 off 3 on
+							HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
+							HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, RESET);
+							display7SEG(0);
+							currentsegment=0;
+							break;
 		}
+	}
+
+	counter2--;
+	if(counter2<=0){ //change led state when a sec passed
+		counter2=100;
+		HAL_GPIO_TogglePin ( LED_RED_GPIO_Port , LED_RED_Pin ) ;
+		HAL_GPIO_TogglePin (DOT_GPIO_Port, DOT_Pin);
 	}
 }
 /* USER CODE END 4 */
