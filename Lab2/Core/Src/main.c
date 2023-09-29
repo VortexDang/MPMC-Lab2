@@ -323,6 +323,34 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+const int MAX_LED = 4;
+int index_led = 0;
+int led_buffer [4] = {1 , 2 , 3 , 4};
+void update7SEG ( int index ) {
+	switch ( index ) {
+	case 0:
+		HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+		HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
+		display7SEG(led_buffer[index]);
+		break;
+	case 1:
+		HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+		HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+		display7SEG(led_buffer[index]);
+		break;
+	case 2:
+		HAL_GPIO_WritePin(EN0_GPIO_Port, EN1_Pin, SET);
+		HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, RESET);
+		display7SEG(led_buffer[index]);
+		break;
+	case 3:
+		HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
+		HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, RESET);
+		display7SEG(led_buffer[index]);
+		break;
+	}
+}
+
 int counter1 = 50; ///for 7seg
 int counter2 = 100; ///for led
 int currentsegment=0;
@@ -330,36 +358,13 @@ void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ){
 	counter1 --;
 	if( counter1 <= 0) {
 		counter1=50;
-		switch(currentsegment){ //change state when half a sec passed
-						case 0: //3 off 0 on
-							HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
-							HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
-							display7SEG(1);
-							currentsegment=1;
-							break;
-						case 1: //0 off 1 on
-							HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
-							HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
-							display7SEG(2);
-							currentsegment=2;
-							break;
-						case 2://1 off 2 on
-							HAL_GPIO_WritePin(EN0_GPIO_Port, EN1_Pin, SET);
-							HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, RESET);
-							display7SEG(3);
-							currentsegment=3;
-							break;
-						case 3://2 off 3 on
-							HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
-							HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, RESET);
-							display7SEG(0);
-							currentsegment=0;
-							break;
-		}
+		update7SEG(index_led++);
 	}
-
+	if(index_led > 3) {
+		index_led = 0;
+	}
 	counter2--;
-	if(counter2<=0){ //change led state when a sec passed
+	if(counter2<=0){
 		counter2=100;
 		HAL_GPIO_TogglePin ( LED_RED_GPIO_Port , LED_RED_Pin ) ;
 		HAL_GPIO_TogglePin (DOT_GPIO_Port, DOT_Pin);
