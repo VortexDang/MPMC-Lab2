@@ -993,7 +993,7 @@ void update7SEG ( int index ) {
 
 08000748 <HAL_TIM_PeriodElapsedCallback>:
 
-int counter1 = 50; ///for 7seg
+int counter1 = 100; ///for 7seg
 int counter2 = 100; ///for led
 int currentsegment=0;
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ){
@@ -1012,9 +1012,9 @@ void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ){
  800075c:	681b      	ldr	r3, [r3, #0]
  800075e:	2b00      	cmp	r3, #0
  8000760:	dc0a      	bgt.n	8000778 <HAL_TIM_PeriodElapsedCallback+0x30>
-		counter1=50;
+		counter1=100;
  8000762:	4b15      	ldr	r3, [pc, #84]	; (80007b8 <HAL_TIM_PeriodElapsedCallback+0x70>)
- 8000764:	2232      	movs	r2, #50	; 0x32
+ 8000764:	2264      	movs	r2, #100	; 0x64
  8000766:	601a      	str	r2, [r3, #0]
 		update7SEG(index_led++);
  8000768:	4b14      	ldr	r3, [pc, #80]	; (80007bc <HAL_TIM_PeriodElapsedCallback+0x74>)

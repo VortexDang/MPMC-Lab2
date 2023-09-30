@@ -351,13 +351,13 @@ void update7SEG ( int index ) {
 	}
 }
 
-int counter1 = 50; ///for 7seg
+int counter1 = 100; ///for 7seg
 int counter2 = 100; ///for led
 int currentsegment=0;
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ){
 	counter1 --;
 	if( counter1 <= 0) {
-		counter1=50;
+		counter1=100;
 		update7SEG(index_led++);
 	}
 	if(index_led > 3) {
