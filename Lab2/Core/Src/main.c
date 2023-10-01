@@ -323,14 +323,14 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int counter1 = 50; ///for 7seg
-int counter2 = 100; ///for led
+int counter1 = 50;
+int counter2 = 100;
 int currentsegment=0;
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ){
 	counter1 --;
 	if( counter1 <= 0) {
 		counter1=50;
-		switch(currentsegment){ //change state when half a sec passed
+		switch(currentsegment){
 						case 0: //3 off 0 on
 							HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
 							HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
@@ -359,7 +359,7 @@ void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ){
 	}
 
 	counter2--;
-	if(counter2<=0){ //change led state when a sec passed
+	if(counter2<=0){
 		counter2=100;
 		HAL_GPIO_TogglePin ( LED_RED_GPIO_Port , LED_RED_Pin ) ;
 		HAL_GPIO_TogglePin (DOT_GPIO_Port, DOT_Pin);
