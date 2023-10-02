@@ -20,4 +20,7 @@ extern int timer3_flag;
 void setTimer3(int );
 void timer3Run();
 
+extern int timer4_flag;
+void setTimer4(int );
+void timer4Run();
 #endif /* INC_SOFTWARE_TIMER_H_ */
