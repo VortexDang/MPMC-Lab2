@@ -249,10 +249,21 @@ int main(void)
 	  HAL_GPIO_WritePin(GPIOA, COL6_Pin, SET);
 	  HAL_GPIO_WritePin(GPIOA, COL7_Pin, SET);
   }
-
   uint8_t matrix_buffer[8]={0x7E,0x81,0x81,0x81,0xFF,0x81,0x81,0x81};
-    void updateLEDMatrix (int index ){
-    	clearAllLEDMatrix();
+  void updateMatrixBuffer() {
+	  uint8_t temp = matrix_buffer[0];
+	  matrix_buffer[0] = matrix_buffer[1];
+	  matrix_buffer[1] = matrix_buffer[2];
+	  matrix_buffer[2] = matrix_buffer[3];
+	  matrix_buffer[3] = matrix_buffer[4];
+	  matrix_buffer[4] = matrix_buffer[5];
+	  matrix_buffer[5] = matrix_buffer[6];
+	  matrix_buffer[6] = matrix_buffer[7];
+	  matrix_buffer[7] = temp;
+  }
+
+  void updateLEDMatrix (int index ){
+	  clearAllLEDMatrix();
   	  switch(index) {
   	  case 0:
   	      HAL_GPIO_WritePin(GPIOB, ROW0_Pin , 0);
@@ -350,7 +361,7 @@ int main(void)
   setTimer1(10);
   setTimer2(15);
   setTimer3(15);
-  setTimer4(5);
+  setTimer4(10);
   HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
   HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
   HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
@@ -402,9 +413,10 @@ int main(void)
 	  if(timer4_flag == 1) {
 		  updateLEDMatrix(index_matrix++);
 		  if(index_matrix == MAX_LED_MATRIX) {
+			  updateMatrixBuffer();
 			  index_matrix = 0;
 		  }
-		  setTimer4(2);
+		  setTimer4(5);
 	  }
   }
   /* USER CODE END 3 */
